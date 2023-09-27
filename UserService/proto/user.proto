@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+option go_package = "github.com/kiran-blockchain/nextxd-go-advanced/grpc-mongo";
+
+package proto;
+
+service Userservice{
+    rpc  CreateUser (User) returns (UserResponse);
+    rpc ListFeatures (Feature) returns (Featureresponse);
+    rpc UpdateRole(Role)returns(UserResponse);
+    rpc DisableUser(UserRequest)returns(UserResponse);
+    rpc EnableUser(UserRequest)returns(UserResponse);
+    rpc AssociateRole(AssociateRequest)returns(UserResponse);
+}
+
+message User{  //CreateUser
+    string name=1;
+    string email=2;
+    string password=3;
+    int64 contact=4;
+    repeated string role=5;
+}
+
+message UserResponse{
+    string message=1;
+}
+
+message Feature{  //ListFeatures
+    string role=1;
+}
+message Featureresponse{
+    string role=1;
+    string responsibility=2;
+    string access=3;
+}
+
+message Role{    //UpdateRole
+    string name=1;
+    repeated string role=2;
+}
+
+message UserRequest { //DisableUser, EnableUser
+    string name=1;
+}
+
+message AssociateRequest{  //AssociateRole
+    string name=1;
+    string role=2;
+}
+
+
