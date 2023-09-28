@@ -11,6 +11,9 @@ service Userservice{
     rpc DisableUser(UserRequest)returns(UserResponse);
     rpc EnableUser(UserRequest)returns(UserResponse);
     rpc AssociateRole(AssociateRequest)returns(UserResponse);
+    rpc DeleteUser(DeleteRequest)returns(UserResponse);
+    rpc FindEnabledUser(StatusRequest)returns(User);
+    // rpc CheckIfRecordExists(User) returns (ExistsResponse);
 }
 
 message User{  //CreateUser
@@ -19,6 +22,7 @@ message User{  //CreateUser
     string password=3;
     int64 contact=4;
     repeated string role=5;
+    string status=6;
 }
 
 message UserResponse{
@@ -47,5 +51,16 @@ message AssociateRequest{  //AssociateRole
     string name=1;
     string role=2;
 }
+
+message DeleteRequest {
+    string email=1;
+}
+
+message StatusRequest {
+    string status=1;
+}
+// message ExistsResponse {
+//     bool existresponse = 1;
+// }
 
 

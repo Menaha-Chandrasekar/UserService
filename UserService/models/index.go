@@ -1,11 +1,12 @@
 package models
 
 type User struct {
-	Name     string `json:"name,omitempty" bson:"name"`
-	Email    string `json:"email,omitempty" bson:"email" `
-	Password string `json:"password,omitempty" bson:"pw"`
-	Contact  int64  `json:"contact,omitempty" bson:"contact"`
+	Name     string   `json:"name,omitempty" bson:"name"`
+	Email    string   `json:"email,omitempty" bson:"email"`
+	Password string   `json:"password,omitempty" bson:"pw"`
+	Contact  int64    `json:"contact,omitempty" bson:"contact"`
 	Role     []string `json:"role,omitempty" bson:"role"`
+	Status   string   `json:"status,omitempty" bson:"status"`
 }
 
 

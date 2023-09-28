@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	// "sync"
 	pb "userservice/proto"
 
 	"github.com/gin-gonic/gin"
@@ -27,9 +26,7 @@ func main() {
 
 	//3.
 	r.POST("/add", func(c *gin.Context) {
-		// var mutex sync.Mutex
-		// mutex.Lock()
-		// defer mutex.Unlock()
+		// var dbMutex sync.Mutex
 
 		var request pb.User
 		if err := c.ShouldBindJSON(&request); err != nil {
@@ -37,7 +34,12 @@ func main() {
 			return
 		}
 		
+		// Lock the mutex to ensure only one request can modify the database at a time.
+		// dbMutex.Lock()
+		// defer dbMutex.Unlock()
+		
 
+		//fup: internally client connects postman to controllers
 		res, err := client.CreateUser(context.TODO(), &request)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -117,6 +119,34 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"message": res.Message})
 	})
 
+	r.POST("/delete",func(c *gin.Context){
+		var request pb.DeleteRequest
+		if err := c.ShouldBindJSON(&request); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		res, err := client.DeleteUser(context.TODO(), &request)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"message": res.Message})
+	})
+
+	r.POST("/findenableduser",func(c *gin.Context){
+		var request pb.StatusRequest
+		if err := c.ShouldBindJSON(&request); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		res, err := client.FindEnabledUser(context.TODO(), &request)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"Name": res.Name, "Email": res.Email, "Password": res.Password,"Contact":res.Contact,"Role":res.Role,"Status":res.Status})
+	})
 	r.Run(":4000")
 
 }
+

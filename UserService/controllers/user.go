@@ -115,3 +115,43 @@ func (r *RPCServer) AssociateRole(ctx context.Context, req *u.AssociateRequest) 
 		return res, nil
 	}
 }
+
+func (r *RPCServer)DeleteUser(ctx context.Context, req *u.DeleteRequest)(*u.UserResponse,error){
+   dbuser:=&models.User{
+	Email: req.Email,
+   }
+   _,err:= UserService.DeleteUser(dbuser)
+   if err != nil {
+	return nil, err
+} else {
+	res := &u.UserResponse{
+		Message: "Delete success",
+	}
+	return res, nil
+}
+
+}
+
+
+func (r *RPCServer) FindEnabledUser(ctx context.Context, req *u.StatusRequest) (*u.User, error) {
+	dbuser := &models.User{
+		Status: req.Status,
+	}
+	list, err := UserService.FindEnabledUser(dbuser)
+	if err != nil {
+		return nil, err
+	} else {
+		res := &u.User{
+			Name: list.Name,
+			Email: list.Email,
+			Password: list.Password,
+			Contact: list.Contact,
+			Role: list.Role,
+			Status: list.Status,
+		}
+		
+		return res, nil
+	}
+}
+
+

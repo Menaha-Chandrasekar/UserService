@@ -28,6 +28,8 @@ type UserserviceClient interface {
 	DisableUser(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (*UserResponse, error)
 	EnableUser(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (*UserResponse, error)
 	AssociateRole(ctx context.Context, in *AssociateRequest, opts ...grpc.CallOption) (*UserResponse, error)
+	DeleteUser(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*UserResponse, error)
+	FindEnabledUser(ctx context.Context, in *StatusRequest, opts ...grpc.CallOption) (*User, error)
 }
 
 type userserviceClient struct {
@@ -92,6 +94,24 @@ func (c *userserviceClient) AssociateRole(ctx context.Context, in *AssociateRequ
 	return out, nil
 }
 
+func (c *userserviceClient) DeleteUser(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*UserResponse, error) {
+	out := new(UserResponse)
+	err := c.cc.Invoke(ctx, "/proto.Userservice/DeleteUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userserviceClient) FindEnabledUser(ctx context.Context, in *StatusRequest, opts ...grpc.CallOption) (*User, error) {
+	out := new(User)
+	err := c.cc.Invoke(ctx, "/proto.Userservice/FindEnabledUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserserviceServer is the server API for Userservice service.
 // All implementations must embed UnimplementedUserserviceServer
 // for forward compatibility
@@ -102,6 +122,8 @@ type UserserviceServer interface {
 	DisableUser(context.Context, *UserRequest) (*UserResponse, error)
 	EnableUser(context.Context, *UserRequest) (*UserResponse, error)
 	AssociateRole(context.Context, *AssociateRequest) (*UserResponse, error)
+	DeleteUser(context.Context, *DeleteRequest) (*UserResponse, error)
+	FindEnabledUser(context.Context, *StatusRequest) (*User, error)
 	mustEmbedUnimplementedUserserviceServer()
 }
 
@@ -126,6 +148,12 @@ func (UnimplementedUserserviceServer) EnableUser(context.Context, *UserRequest) 
 }
 func (UnimplementedUserserviceServer) AssociateRole(context.Context, *AssociateRequest) (*UserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AssociateRole not implemented")
+}
+func (UnimplementedUserserviceServer) DeleteUser(context.Context, *DeleteRequest) (*UserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
+}
+func (UnimplementedUserserviceServer) FindEnabledUser(context.Context, *StatusRequest) (*User, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindEnabledUser not implemented")
 }
 func (UnimplementedUserserviceServer) mustEmbedUnimplementedUserserviceServer() {}
 
@@ -248,6 +276,42 @@ func _Userservice_AssociateRole_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Userservice_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserserviceServer).DeleteUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Userservice/DeleteUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserserviceServer).DeleteUser(ctx, req.(*DeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Userservice_FindEnabledUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserserviceServer).FindEnabledUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Userservice/FindEnabledUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserserviceServer).FindEnabledUser(ctx, req.(*StatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Userservice_ServiceDesc is the grpc.ServiceDesc for Userservice service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -278,6 +342,14 @@ var Userservice_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AssociateRole",
 			Handler:    _Userservice_AssociateRole_Handler,
+		},
+		{
+			MethodName: "DeleteUser",
+			Handler:    _Userservice_DeleteUser_Handler,
+		},
+		{
+			MethodName: "FindEnabledUser",
+			Handler:    _Userservice_FindEnabledUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
